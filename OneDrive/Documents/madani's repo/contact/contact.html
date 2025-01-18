@@ -81,7 +81,7 @@
           <button class="btn mb-2">
             <a href="contact1.html"><img src="46646.png" alt="Contacts"></a>
           </button>
-          <strong > Contact</strong><br>
+          <strong> Contact</strong><br>
           <button class="btn mb-2">
             <img src="highlighter-comments-highlighter-icon-sv-11563531247ey8hkqjokg-removebg-preview.png" alt="Highlights">
           </button>
@@ -96,26 +96,27 @@
       <!-- Form Area -->
       <div class="col-10 form-container">
         <button type="button" class="save-btn">Save</button>
-        <div class="profile-img">
-          <img src="https://cdn-icons-png.flaticon.com/512/747/747376.png" alt="Add Image">
+        <div class="profile-img" id="profileImgContainer">
+          <img src="https://cdn-icons-png.flaticon.com/512/747/747376.png" alt="Add Image" id="profileImgPreview">
         </div>
+        <input type="file" id="imageInput" accept="image/*" style="display: none;">
 
         <form>
           <div class="mb-3">
-            <input type="text" class="form-control" placeholder="First Name">
+            <input type="text" class="form-control" placeholder="First Name" id="firstName">
           </div>
           <div class="mb-3">
-            <input type="text" class="form-control" placeholder="Last Name">
+            <input type="text" class="form-control" placeholder="Last Name" id="lastName">
           </div>
           <div class="mb-3">
-            <input type="text" class="form-control" placeholder="Number">
+            <input type="text" class="form-control" placeholder="Number" id="phoneNumber">
           </div>
           <div class="mb-3">
-            <input type="email" class="form-control" placeholder="Email">
+            <input type="email" class="form-control" placeholder="Email" id="email">
           </div>
           <!-- City Selection Dropdown -->
           <div class="mb-3">
-            <select class="form-control" aria-label="Select City">
+            <select class="form-control" id="city">
               <option selected disabled>Select City</option>
               <option value="Marrakech">Marrakech</option>
               <option value="Laayoune">Laayoune</option>
@@ -125,7 +126,7 @@
           </div>
           <!-- Gender Selection Dropdown -->
           <div class="mb-3">
-            <select class="form-control" aria-label="Select Gender">
+            <select class="form-control" id="gender">
               <option selected disabled>Select Gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
@@ -138,91 +139,60 @@
   </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const saveButton = document.querySelector(".save-btn");
-      const form = document.querySelector("form");
-      const firstNameInput = document.querySelector('input[placeholder="First Name"]');
-      const lastNameInput = document.querySelector('input[placeholder="Last Name"]');
-      const numberInput = document.querySelector('input[placeholder="Number"]');
-      const emailInput = document.querySelector('input[placeholder="Email"]');
-      const citySelect = document.querySelector('select[aria-label="Select City"]');
-      const genderSelect = document.querySelector('select[aria-label="Select Gender"]');
-      const inputs = [firstNameInput, lastNameInput, numberInput, emailInput, citySelect, genderSelect];
+    const saveButton = document.querySelector(".save-btn");
+    const form = document.querySelector("form");
+    const firstNameInput = document.getElementById("firstName");
+    const lastNameInput = document.getElementById("lastName");
+    const phoneInput = document.getElementById("phoneNumber");
+    const emailInput = document.getElementById("email");
+    const citySelect = document.getElementById("city");
+    const genderSelect = document.getElementById("gender");
+    const profileImgPreview = document.getElementById("profileImgPreview");
+    const profileImgContainer = document.getElementById("profileImgContainer");
+    const imageInput = document.getElementById("imageInput");
 
-      // Disable Save button initially
-      saveButton.disabled = true;
+    profileImgContainer.addEventListener("click", () => {
+      imageInput.click();
+    });
 
-      // Enable Save button on input
-      inputs.forEach((input) => {
-        input.addEventListener("input", () => {
-          saveButton.disabled = !Array.from(inputs).some((input) => input.value.trim() !== "");
-        });
-      });
-
-      saveButton.addEventListener("click", function (event) {
-        event.preventDefault();
-
-        // Clear previous errors
-        document.querySelectorAll(".error-message").forEach((msg) => msg.remove());
-        inputs.forEach((input) => input.classList.remove("is-invalid"));
-
-        const firstName = firstNameInput.value.trim();
-        const lastName = lastNameInput.value.trim();
-        const number = numberInput.value.trim();
-        const email = emailInput.value.trim();
-        const city = citySelect.selectedIndex === 0 ? "" : citySelect.value;
-        const gender = genderSelect.selectedIndex === 0 ? "" : genderSelect.value;
-
-        let isValid = true;
-
-        // Validation
-        if (!firstName) {
-          displayError(firstNameInput, "First Name is required.");
-          isValid = false;
-        }
-        if (!lastName) {
-          displayError(lastNameInput, "Last Name is required.");
-          isValid = false;
-        }
-        if (!number) {
-          displayError(numberInput, "Number is required.");
-          isValid = false;
-        } else if (!/^(05|06|07)\d{8}$/.test(number)) {
-          displayError(numberInput, "Invalid number format.");
-          isValid = false;
-        }
-        if (!email) {
-          displayError(emailInput, "Email is required.");
-          isValid = false;
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-          displayError(emailInput, "Invalid email format.");
-          isValid = false;
-        }
-        if (!city) {
-          displayError(citySelect, "Please select a city.");
-          isValid = false;
-        }
-        if (!gender) {
-          displayError(genderSelect, "Please select a gender.");
-          isValid = false;
-        }
-
-        if (!isValid) return;
-
-        console.log("Form Data Saved:", { firstName, lastName, number, email, city, gender });
-        alert("Form saved successfully!");
-        form.reset();
-        citySelect.selectedIndex = 0;
-        genderSelect.selectedIndex = 0;
-      });
-
-      function displayError(element, message) {
-        const error = document.createElement("div");
-        error.className = "error-message text-danger mt-1";
-        error.textContent = message;
-        element.classList.add("is-invalid");
-        element.parentNode.appendChild(error);
+    imageInput.addEventListener("change", () => {
+      const file = imageInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          profileImgPreview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
       }
+    });
+
+    saveButton.addEventListener("click", function (event) {
+      event.preventDefault();
+
+      const contact = {
+        id: Date.now(),
+        name: `${firstNameInput.value.trim()} ${lastNameInput.value.trim()}`,
+        phone: phoneInput.value.trim(),
+        email: emailInput.value.trim(),
+        city: citySelect.value,
+        gender: genderSelect.value,
+        img: profileImgPreview.src,
+      };
+
+      if (!contact.name || !contact.phone || !contact.email || !contact.city || !contact.gender) {
+        alert("Please fill out all fields!");
+        return;
+      }
+
+      const savedContacts = JSON.parse(localStorage.getItem("contacts")) || [];
+      savedContacts.push(contact);
+      localStorage.setItem("contacts", JSON.stringify(savedContacts));
+
+      alert("Contact saved!");
+      form.reset();
+      profileImgPreview.src = "https://cdn-icons-png.flaticon.com/512/747/747376.png";
+
+      
     });
   </script>
 </body>
